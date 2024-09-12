@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weapon Detection</title>
+</head>
+<body>
+    <h1>Welcome to Weapon Detection</h1>
+    <p>Upload an image or video file for detection.</p>
+    <form action="/detect" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <input type="submit" value="Upload" />
+    </form>
+    <div id="result"></div>
+    <div id="loading" style="display:none;">Loading...</div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

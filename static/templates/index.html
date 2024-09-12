@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firearm Detection System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #loading {
+            display: none;
+            font-size: 18px;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Firearm Detection System</h1>
+        <input type="file" id="fileInput" accept="image/*,video/*">
+        <button onclick="startDetection()">Start Detection</button>
+        <div id="loading">Detecting...</div>
+        <div id="result"></div>
+    </div>
+    <script>
+        async function startDetection() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            if (fileInput.files.length === 0) {
+                resultDiv.innerText = 'Please upload an image or video file.';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            loadingDiv.style.display = 'block';
+            resultDiv.innerText = '';
+
+            try {
+                const response = await fetch('/detect', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                resultDiv.innerText = `Detection completed: ${result.result}`;
+            } catch (error) {
+                resultDiv.innerText = 'Error occurred during detection.';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+    </script>
+    <script src="{{ url_for('static', filename='weaponDetection.js') }}"></script>
+
+</body>
+</html>
