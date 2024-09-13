@@ -16,7 +16,7 @@ async function startDetection() {
     resultDiv.innerText = '';
 
     try {
-        const response = await fetch('http://localhost:5000/detect', { 
+        const response = await fetch('https://real-time-cctv-weapon-detection.vercel.app/', { 
             method: 'POST',
             body: formData
         });
