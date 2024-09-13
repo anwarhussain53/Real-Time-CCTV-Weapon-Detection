@@ -29,45 +29,51 @@ def detect():
     file_path = f"./temp/{file.filename}"
     file.save(file_path)
 
-    # Read the image
-    img = cv2.imread(file_path)
-    if img is None:
-        return jsonify({'error': 'Unable to read image'}), 500
+    # Process video file
+    video_capture = cv2.VideoCapture(file_path)
+    if not video_capture.isOpened():
+        return jsonify({'error': 'Unable to open video'}), 500
 
-    height, width, channels = img.shape
+    results = []
 
-    # Detect objects in the image
-    blob = cv2.dnn.blobFromImage(img, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-    net.setInput(blob)
-    outs = net.forward(output_layers)
+    while video_capture.isOpened():
+        ret, frame = video_capture.read()
+        if not ret:
+            break
 
-    class_ids = []
-    confidences = []
-    boxes = []
-    for out in outs:
-        for detection in out:
-            scores = detection[5:]
-            class_id = np.argmax(scores)
-            confidence = scores[class_id]
-            if confidence > 0.3:  # Adjust confidence threshold if needed
-                center_x = int(detection[0] * width)
-                center_y = int(detection[1] * height)
-                w = int(detection[2] * width)
-                h = int(detection[3] * height)
-                x = int(center_x - w / 2)
-                y = int(center_y - h / 2)
-                boxes.append([x, y, w, h])
-                confidences.append(float(confidence))
-                class_ids.append(class_id)
+        height, width, channels = frame.shape
 
-    indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-    if len(indexes) > 0:
-        detected_classes = [classes[class_ids[i]] for i in indexes.flatten()]
-        result = f"Weapons detected: {', '.join(detected_classes)}"
-    else:
-        result = "No firearm detected"
+        # Detect objects in the frame
+        blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+        net.setInput(blob)
+        outs = net.forward(output_layers)
 
-    return jsonify({'result': result})
+        class_ids = []
+        confidences = []
+        boxes = []
+        for out in outs:
+            for detection in out:
+                scores = detection[5:]
+                class_id = np.argmax(scores)
+                confidence = scores[class_id]
+                if confidence > 0.3:  # Adjust confidence threshold if needed
+                    center_x = int(detection[0] * width)
+                    center_y = int(detection[1] * height)
+                    w = int(detection[2] * width)
+                    h = int(detection[3] * height)
+                    x = int(center_x - w / 2)
+                    y = int(center_y - h / 2)
+                    boxes.append([x, y, w, h])
+                    confidences.append(float(confidence))
+                    class_ids.append(class_id)
+
+        indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+        detected_classes = [classes[class_ids[i]] for i in indexes.flatten()] if len(indexes) > 0 else []
+
+        results.append(detected_classes)
+
+    video_capture.release()
+    return jsonify({'result': results})
 
 if __name__ == '__main__':
     app.run(debug=True)
