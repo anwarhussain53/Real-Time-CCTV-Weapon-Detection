@@ -1,0 +1,12 @@
+ECHO is on.
+# Ignore YOLOv3 weights and config files
+*.weights
+*.cfg
+
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+
+# Ignore logs and system-specific files
+*.log
+.DS_Store
