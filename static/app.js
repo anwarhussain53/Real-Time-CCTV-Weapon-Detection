@@ -16,19 +16,42 @@ async function startDetection() {
     resultDiv.innerText = '';
 
     try {
-        const response = await fetch('/api/detect', { 
+        const response = await fetch('/detect', {
             method: 'POST',
             body: formData
         });
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const result = await response.json();
-        resultDiv.innerText = `Detection completed: ${result.result}`;
+        
+        if (result.error) {
+            resultDiv.innerText = `Error occurred during detection: ${result.error}`;
+        } else {
+            // Summarize detection results
+            const summary = result.result.flat().reduce((acc, detection) => {
+                acc[detection] = (acc[detection] || 0) + 1;
+                return acc;
+            }, {});
+
+            // Generate HTML for the result
+            const summaryHtml = Object.entries(summary).map(([label, count]) => `
+                <li>${label}: ${count}</li>
+            `).join('');
+
+            resultDiv.innerHTML = `
+                <p>Detection completed.</p>
+                <p>Frames processed: ${result.frame_count}</p>
+                <p>Detection summary:</p>
+                <ul>
+                    ${summaryHtml}
+                </ul>
+            `;
+        }
     } catch (error) {
-        resultDiv.innerText = 'Error occurred during detection.';
+        resultDiv.innerText = `Error occurred during detection: ${error.message}`;
     } finally {
         loadingDiv.style.display = 'none';
     }

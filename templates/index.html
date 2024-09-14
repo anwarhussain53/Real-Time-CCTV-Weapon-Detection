@@ -1,18 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weapon Detection</title>
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file -->
 </head>
 <body>
-    <h1>Welcome to Weapon Detection</h1>
-    <p>Upload an image or video file for detection.</p>
-    
-    <input type="file" id="fileInput" />
-    <button onclick="startDetection()">Upload</button>
+    <header>
+        <h1>Welcome to Weapon Detection</h1>
+        <h2>Weapon Detection Made Easy</h2>
+        <p>Upload an image or video file for detection.</p>
+    </header>
 
-    <div id="result"></div>
-    <div id="loading" style="display:none;">Loading...</div>
+    <main>
+        <div class="upload-container">
+            <input type="file" id="fileInput" />
+            <button onclick="startDetection()">Upload</button>
+        </div>
 
-    <script src="/static/app.js"></script> <!-- Updated to reference the correct path -->
+        <div id="loading" class="loading" style="display:none;">
+            <img src="/static/loading.gif" alt="Loading..." /> <!-- Animated loading GIF -->
+        </div>
+        
+        <div id="result" class="result"></div>
+    </main>
+
+    <footer>
+        <p>Powered by Flask and YOLO Object Detection</p>
+        <p>Developed by Anwar Hussain</p>
+        <a href="https://github.com/anwarhussain53" target="_blank" class="github-link">
+            <img src="/static/github.png" alt="GitHub Logo" class="github-logo" />
+        </a>
+    </footer>
+
+    <script src="/static/app.js"></script> <!-- JavaScript for handling file uploads and detection -->
 </body>
 </html>
