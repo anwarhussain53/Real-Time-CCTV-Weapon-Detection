@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weapon Detection</title>
-    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file -->
+
+    <!-- Link to favicon -->
+    <link rel="icon" href="/static/favicon.png" type="image/png">
+
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="/static/styles.css"> 
 </head>
 <body>
     <header>
@@ -15,8 +20,11 @@
 
     <main>
         <div class="upload-container">
-            <input type="file" id="fileInput" />
-            <button onclick="startDetection()">Upload</button>
+            <form id="uploadForm">
+                <label for="fileInput">Select an image or video file:</label>
+                <input type="file" id="fileInput" name="file" /> <!-- Add 'name="file"' to match Flask -->
+                <button type="button" onclick="startDetection()">Upload</button> <!-- Use button type="button" -->
+            </form>
         </div>
 
         <div id="loading" class="loading" style="display:none;">
@@ -34,6 +42,8 @@
         </a>
     </footer>
 
-    <script src="/static/app.js"></script> <!-- JavaScript for handling file uploads and detection -->
+    <script src="/static/app.js?v=1"></script> <!-- Add a version query parameter -->
+
+    <!-- JavaScript for handling file uploads and detection -->
 </body>
 </html>

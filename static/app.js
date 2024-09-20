@@ -2,7 +2,7 @@ async function startDetection() {
     const fileInput = document.getElementById('fileInput');
     const resultDiv = document.getElementById('result');
     const loadingDiv = document.getElementById('loading');
-    
+
     if (fileInput.files.length === 0) {
         resultDiv.innerText = 'Please upload an image or video file.';
         return;
@@ -26,28 +26,22 @@ async function startDetection() {
         }
 
         const result = await response.json();
-        
+        console.log('Response result:', result);  // Debugging line to see the returned result
+
         if (result.error) {
             resultDiv.innerText = `Error occurred during detection: ${result.error}`;
         } else {
-            // Summarize detection results
-            const summary = result.result.flat().reduce((acc, detection) => {
-                acc[detection] = (acc[detection] || 0) + 1;
-                return acc;
-            }, {});
+            const frameCount = result.frame_count;
+            const detectionSummary = result.result;
 
-            // Generate HTML for the result
-            const summaryHtml = Object.entries(summary).map(([label, count]) => `
-                <li>${label}: ${count}</li>
-            `).join('');
+            // Check if a weapon was detected and display the appropriate message
+            const weaponDetected = detectionSummary.weapon_detected;
+            const weaponName = detectionSummary.weapon_name || 'No weapon detected';
 
             resultDiv.innerHTML = `
                 <p>Detection completed.</p>
-                <p>Frames processed: ${result.frame_count}</p>
-                <p>Detection summary:</p>
-                <ul>
-                    ${summaryHtml}
-                </ul>
+                <p>Frames processed: ${frameCount}</p>
+                <p>detection summary: ${weaponDetected ? weaponName : 'No weapon detected'}</p>
             `;
         }
     } catch (error) {
