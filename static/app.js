@@ -9,6 +9,7 @@ async function startDetection() {
     }
 
     const file = fileInput.files[0];
+    
     const formData = new FormData();
     formData.append('file', file);
 
